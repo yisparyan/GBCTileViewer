@@ -1,0 +1,6 @@
+
+.hex-editor {
+    -fx-skin:   "com.isparyan.gbctileviewer.HexEditorSkin";
+    -fx-color: orange;
+
+}
