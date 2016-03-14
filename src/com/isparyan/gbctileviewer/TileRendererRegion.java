@@ -52,8 +52,8 @@ public class TileRendererRegion extends Region
 
             for(int j = 0; j < numRows; j++) {
                 Random rand = new Random();
-                int next = rand.nextInt(4);
-                switch (next){
+                int setColor = rand.nextInt(4);
+                switch (setColor){
                     case 0:
                         gc.setFill(color0);
                         break;
@@ -71,23 +71,77 @@ public class TileRendererRegion extends Region
             }
         }
     }
+    public void drawPicture(ByteReadData byteReadData) {
+        clearCanvas();
+        int numRows = byteReadData.bytesRead/HexTextRegion.BYTES_PER_LINE;
+        System.out.println("Number of tiles to be printed: "+ numRows);
 
-    private void bytesToPixels()
+        int currentRow = -1;                 //What row to draw our tile, incremented right away
+        for(int i = 0; i < numRows; i++) {  //each row is a tile
+            if(i%tilesWidth == 0) {
+                currentRow++;
+            }
+
+            for(int j = 0; j < HexTextRegion.BYTES_PER_LINE; j+=2) { //iterates through every two byte pairs which make a 8 pixel line
+
+
+                for(int c = 0; c < 8; c++) {                        //draws 8 horizontal pixels in a tile
+                    int hibit = (byteReadData.bytes[i*HexTextRegion.BYTES_PER_LINE+j+1] >> (7-c)) & 1;
+                    int lobit = (byteReadData.bytes[i*HexTextRegion.BYTES_PER_LINE+j] >> (7-c)) & 1;
+                    int setColor = (hibit << 1) | lobit;
+
+                    switch (setColor){
+                        case 0:
+                            gc.setFill(color0);
+                            break;
+                        case 1:
+                            gc.setFill(color1);
+                            break;
+                        case 2:
+                            gc.setFill(color2);
+                            break;
+                        case 3:
+                            gc.setFill(color3);
+                            break;
+                    }
+                    gc.fillRect(8*pixelSize*(i%tilesWidth) + c*pixelSize, currentRow*8*pixelSize + j/2*pixelSize, pixelSize, pixelSize);
+
+                }
+            }
+
+
+        }
+
+    }
+
+    private int[] bytesToPixelsColor(byte[] bytes)
     {
 
+
+
+        return null;
     }
 
     private void clearCanvas()
     {
         gc.clearRect(0,0, canvas.getWidth(), canvas.getHeight());
-        //gc.fillRect(0,0,canvas.getWidth(),canvas.getHeight());
     }
     private void calculatePixelSize()
     {
         //TODO
-        pixelSize = 16;
-
+        pixelSize = 4;
+        tilesWidth = 32;
         pixels = new int[PIXELS_LENGTH_PER_TILE * tilesWidth * PIXELS_LENGTH_PER_TILE * tilesHeight];
     }
+    public int getNumVisibleRows() { return tilesHeight;}
 
+
+    public void changeWidth(double width)
+    {
+        canvas.setWidth(width);
+    }
+    public void changeHeight(double height)
+    {
+        canvas.setHeight(height);
+    }
 }

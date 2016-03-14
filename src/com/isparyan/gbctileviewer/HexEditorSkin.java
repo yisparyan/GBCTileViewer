@@ -115,8 +115,7 @@ public class HexEditorSkin extends SkinBase<HexEditor> implements Skin<HexEditor
         scrollBar.setOrientation(Orientation.VERTICAL);
 
         if(getSkinnable().isFileLoaded()) {
-            scrollBar.setMax(((double) getSkinnable().getFileLength() / HexTextRegion.BYTES_PER_LINE) - 10);
-            scrollBar.setVisibleAmount(hexBox.getNumVisibleRows());
+            setScrollBarSettings();
         }
         else {
             scrollBar.setMax(0);

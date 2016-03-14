@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.isparyan.gbchexviewer.Controller">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                        <MenuItem mnemonicParsing="false" onAction="#fileMenuOpenFile" text="Open File" />
+                        <MenuItem mnemonicParsing="false" text="Save" />
+                        <MenuItem mnemonicParsing="false" text="Save as..." />
+                    <MenuItem fx:id="menuItemClose" mnemonicParsing="false" onAction="#fileMenuClose" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#helpMenuAbout" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <Label text="Label" />
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <SplitPane dividerPositions="0.29797979797979796" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minWidth="-Infinity" prefWidth="600.0">
+               <children>
+                  <TableView prefHeight="539.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <columns>
+                      <TableColumn minWidth="-1.0" prefWidth="90.0" sortable="false" text="Address" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="0" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="1" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="2" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="3" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="4" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="5" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="6" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="7" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="8" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="9" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="a" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="b" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="c" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="d" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="e" />
+                        <TableColumn prefWidth="32.0" resizable="false" sortable="false" text="f" />
+                    </columns>
+                  </TableView>
+               </children></AnchorPane>
+          <AnchorPane minWidth="0.0" prefWidth="200.0" />
+        </items>
+      </SplitPane>
+   </center>
+   <bottom>
+      <HBox fillHeight="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="bottomLabel" text="BottomLabel">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin>
+               <padding>
+                  <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+               </padding></Label>
+         </children>
+      </HBox>
+   </bottom>
+</BorderPane>

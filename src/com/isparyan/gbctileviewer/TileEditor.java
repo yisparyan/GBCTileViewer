@@ -1,7 +1,12 @@
 package com.isparyan.gbctileviewer;
 
+import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.RandomAccessFile;
 
 /**
  * Created by YURIY on 2/8/2016.
@@ -13,19 +18,54 @@ import javafx.scene.control.Skin;
  */
 public class TileEditor extends Control
 {
-    HexEditor hexEditor; //Our reference to the hexEditor
+    HexEditor hexViewer; //Our reference to the hexEditor
+    private SimpleBooleanProperty fileLoadedProperty;
+    private RandomAccessFile reader;
 
-    public TileEditor(HexEditor hexEditor)
+    public TileEditor(HexEditor hexViewer)
     {
-        this.hexEditor = hexEditor;
+        this.hexViewer = hexViewer;
+        fileLoadedProperty = new SimpleBooleanProperty(false);
     }
 
-    public HexEditor getHexEditor(){return hexEditor;}
+    public HexEditor getHexEditor(){
+        return hexViewer;
+    }
 
+
+    public boolean setFile(File file)
+    {
+        fileLoadedProperty.set(false);
+        try{
+            if(reader != null) reader.close();
+            reader = new RandomAccessFile(file, "r");
+            fileLoadedProperty.set(true);
+            return true;
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+    public long getFileLength()
+    {
+        try {
+            return reader.length();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        return 0L;
+    }
 
     @Override
     protected Skin createDefaultSkin()
     {
         return new TileEditorSkin(this);
+    }
+
+    public boolean isFileLoaded()
+    {
+        return fileLoadedProperty.get();
     }
 }

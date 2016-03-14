@@ -29,7 +29,7 @@ public class HexTextRegion extends Region
 
     public HexTextRegion()
     {
-        this(700,600, 18);
+        this(700,600, 16);
     }
     public HexTextRegion(double width, double height, int fontsize)
     {

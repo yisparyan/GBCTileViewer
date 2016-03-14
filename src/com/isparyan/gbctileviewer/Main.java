@@ -19,6 +19,8 @@ public class Main extends Application {
     private BorderPane rootMain;
 
     private HexEditor hexViewer;
+    private TileEditor tileEditor;
+
     private Label bottomInfoLabel;
 
     @Override
@@ -38,8 +40,9 @@ public class Main extends Application {
 
         splitPane.getItems().add(hexViewer);
         splitPane.setDividerPosition(0, 1);
+
         //Tile Renderer
-        TileEditor tileEditor = new TileEditor(hexViewer);
+        tileEditor = new TileEditor(hexViewer);
         splitPane.getItems().add(tileEditor);
         /////* End Center */////
         ////////////////////////
@@ -103,6 +106,7 @@ public class Main extends Application {
         /* Help Menu */
         final Menu menuHelp = new Menu("Help");
         final MenuItem menuItemHelpAbout = new MenuItem("About");
+        menuItemHelpAbout.setOnAction(event->HelpAbout());
         menuHelp.getItems().addAll(menuItemHelpAbout);
         /* End Help Menu */
 
@@ -128,6 +132,10 @@ public class Main extends Application {
         primaryStage.show();
 
     }
+    private void HelpAbout()
+    {
+        System.out.println("About menu option selected");
+    }
     private void fileMenuOpen()
     {
         FileChooser fileChooser = new FileChooser();
@@ -136,7 +144,7 @@ public class Main extends Application {
                 new FileChooser.ExtensionFilter("GBC", "*.gbc")
         );
         File romFile = fileChooser.showOpenDialog(rootMain.getScene().getWindow());
-        if(romFile != null && hexViewer.setFile(romFile)) {
+        if(romFile != null && hexViewer.setFile(romFile) && tileEditor.setFile(romFile)) {
             bottomInfoLabel.setText("Opened file: " + romFile.getAbsolutePath() + "\t File size: " +hexViewer.getFileLength() + " bytes.");
         }
         else {

@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.isparyan.gbchexviewer.Controller">
+   <top>
+      <VBox BorderPane.alignment="CENTER">
+         <children>
+            <MenuBar>
+              <menus>
+                <Menu mnemonicParsing="false" text="File">
+                  <items>
+                        <MenuItem mnemonicParsing="false" onAction="#fileMenuOpenFile" text="Open File" />
+                        <MenuItem mnemonicParsing="false" text="Save" />
+                        <MenuItem mnemonicParsing="false" text="Save as..." />
+                    <MenuItem fx:id="menuItemClose" mnemonicParsing="false" onAction="#fileMenuClose" text="Close" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Delete" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" onAction="#helpMenuAbout" text="About" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+            <Label text="Label" />
+         </children>
+      </VBox>
+   </top>
+   <center>
+      <SplitPane dividerPositions="0.65" BorderPane.alignment="CENTER">
+        <items>
+          <AnchorPane minWidth="-Infinity">
+               <children>
+                  <TextArea fx:id="hexTextArea" prefHeight="531.0" prefWidth="536.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
+               </children></AnchorPane>
+          <AnchorPane minWidth="0.0" />
+        </items>
+      </SplitPane>
+   </center>
+   <bottom>
+      <HBox fillHeight="false" maxHeight="25.0" minHeight="25.0" prefHeight="25.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label fx:id="bottomLabel" text="BottomLabel">
+               <HBox.margin>
+                  <Insets />
+               </HBox.margin></Label>
+            <Region minWidth="0.0" prefWidth="0.0" HBox.hgrow="ALWAYS" />
+            <ProgressBar fx:id="progressBar" prefWidth="100.0" progress="0.0" />
+            <ProgressIndicator fx:id="progressIndicator" minWidth="5.0" progress="0.0" />
+         </children>
+         <padding>
+            <Insets bottom="4.0" left="4.0" right="4.0" top="4.0" />
+         </padding>
+      </HBox>
+   </bottom>
+</BorderPane>
