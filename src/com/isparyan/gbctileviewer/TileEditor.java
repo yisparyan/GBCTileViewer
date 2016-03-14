@@ -1,5 +1,6 @@
 package com.isparyan.gbctileviewer;
 
+import javafx.beans.property.ReadOnlyBooleanProperty;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.scene.control.Control;
 import javafx.scene.control.Skin;
@@ -21,6 +22,8 @@ public class TileEditor extends Control
     HexEditor hexViewer; //Our reference to the hexEditor
     private SimpleBooleanProperty fileLoadedProperty;
     private RandomAccessFile reader;
+    private long currentPos;
+    private int bytesRead;
 
     public TileEditor(HexEditor hexViewer)
     {
@@ -32,6 +35,56 @@ public class TileEditor extends Control
         return hexViewer;
     }
 
+
+    //offset is num of bytes to offset the reader from current pos
+    public ByteReadData getData(int numBytes, int bytesOffset)
+    {
+        if(reader == null) return null;
+
+        try{
+            byte[] data = new byte[numBytes];
+            currentPos = reader.getFilePointer();
+
+            reader.seek(currentPos+bytesOffset);                    //Jump to loc to read from
+
+            bytesRead = reader.read(data);
+            if(bytesRead > 0)                                       //Read data
+            {
+                reader.seek(currentPos+bytesOffset);                //Reset location back
+
+                currentPos = reader.getFilePointer(); System.out.println("Current line Pos: "+currentPos/16); //DEBUGGING PURPOSES
+                return new ByteReadData(data, bytesRead, currentPos);
+            }
+            else { reader.seek(currentPos); }                       //Reset to original loc
+            System.out.println("Not reading bytes");
+        }
+        catch (IOException e){
+            System.out.println("Error reading data from file.");
+            e.printStackTrace();
+        }
+
+        return null;
+    }
+    public ByteReadData getDataAtLoc(int numBytes, long pos)
+    {
+        if(reader == null) return null;
+
+        try{
+            byte[] data = new byte[numBytes];
+            reader.seek(pos);
+            bytesRead = reader.read(data);
+            if(bytesRead > 0)
+            {
+                reader.seek(pos);
+                return new ByteReadData(data, bytesRead, pos);
+            }
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
+        return null;
+    }
 
     public boolean setFile(File file)
     {
@@ -67,5 +120,9 @@ public class TileEditor extends Control
     public boolean isFileLoaded()
     {
         return fileLoadedProperty.get();
+    }
+    public ReadOnlyBooleanProperty fileLoadedProperty()
+    {
+        return fileLoadedProperty;
     }
 }

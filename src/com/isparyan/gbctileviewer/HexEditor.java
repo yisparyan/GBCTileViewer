@@ -24,6 +24,7 @@ public class HexEditor extends Control
     private RandomAccessFile reader;
     private long currentPos;
     private SimpleBooleanProperty fileLoadedProperty;
+
     private byte[] data;
     private int bytesRead;
 
@@ -35,7 +36,6 @@ public class HexEditor extends Control
     }
     public HexEditor(File file)
     {
-        data = null;
         fileLoadedProperty = new SimpleBooleanProperty(false);
         dataChangedProperty = new SimpleBooleanProperty(false);
         getStyleClass().add("hex-editor");
@@ -105,7 +105,7 @@ public class HexEditor extends Control
         if(reader == null) return null;
 
         try{
-            byte[] data = new byte[numBytes];
+            data = new byte[numBytes];
             reader.seek(pos);
             bytesRead = reader.read(data);
             if(bytesRead > 0)

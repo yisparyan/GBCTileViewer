@@ -31,12 +31,12 @@ public class HexEditorSkin extends SkinBase<HexEditor> implements Skin<HexEditor
     final static double PREF_HEIGHT = 500;
 
     /* The Nodes*/
-    HBox hbox;
-    HexTextRegion hexBox;
-    ScrollBar scrollBar;
+    private HBox hbox;
+    private HexTextRegion hexBox;
+    private ScrollBar scrollBar;
 
-    long currentLine;
-    boolean scrollbarListenerDisable;
+    private long currentLine;
+    private boolean scrollbarListenerDisable;
 
     public HexEditorSkin(HexEditor control)
     {
@@ -204,9 +204,6 @@ public class HexEditorSkin extends SkinBase<HexEditor> implements Skin<HexEditor
                 moveAndDraw(-moveAmount);
             }
         });
-
-
-
     }
 
 }

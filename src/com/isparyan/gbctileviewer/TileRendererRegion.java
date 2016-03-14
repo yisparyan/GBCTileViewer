@@ -15,9 +15,9 @@ public class TileRendererRegion extends Region
 {
     Canvas canvas;
     GraphicsContext gc;
-    double pixelSize;   //What are the pixel dimensions, of one tile pixel
-    int tilesWidth;     //How many tiles are we drawing on the width of the canvas
-    int tilesHeight;    //How many tiles are we drawing on the height of the canvas
+    private double pixelSize;   //What are the pixel dimensions, of one tile pixel
+    private int tilesWidth;     //How many tiles are we drawing on the width of the canvas
+    private int tilesHeight;    //How many tiles are we drawing on the height of the canvas
     int[] pixels;
 
     private final static Paint color0 =  Paint.valueOf("000000");
@@ -25,7 +25,8 @@ public class TileRendererRegion extends Region
     private final static Paint color2 =  Paint.valueOf("AAAAAA");
     private final static Paint color3 =  Paint.valueOf("FFFFFF");
 
-    private final static int PIXELS_LENGTH_PER_TILE = 8;               //pixel length in square tile
+    final static int TILE_PIXELS_LENGTH = 8;               //pixel length in square tile
+    final static int BYTES_PER_TILE = 16;
 
     public TileRendererRegion() { this(700, 600); }
     public TileRendererRegion(double width, double height)
@@ -73,11 +74,12 @@ public class TileRendererRegion extends Region
     }
     public void drawPicture(ByteReadData byteReadData) {
         clearCanvas();
-        int numRows = byteReadData.bytesRead/HexTextRegion.BYTES_PER_LINE;
-        System.out.println("Number of tiles to be printed: "+ numRows);
+        int numTiles = byteReadData.bytesRead/HexTextRegion.BYTES_PER_LINE;
+
+        System.out.println("Number of tiles to be printed: "+ numTiles);
 
         int currentRow = -1;                 //What row to draw our tile, incremented right away
-        for(int i = 0; i < numRows; i++) {  //each row is a tile
+        for(int i = 0; i < numTiles; i++) {
             if(i%tilesWidth == 0) {
                 currentRow++;
             }
@@ -129,11 +131,13 @@ public class TileRendererRegion extends Region
     private void calculatePixelSize()
     {
         //TODO
-        pixelSize = 4;
-        tilesWidth = 32;
-        pixels = new int[PIXELS_LENGTH_PER_TILE * tilesWidth * PIXELS_LENGTH_PER_TILE * tilesHeight];
+        pixelSize = 2;
+        tilesWidth = 16;
+        tilesHeight = 80;
+        //pixels = new int[PIXELS_LENGTH_PER_TILE * tilesWidth * PIXELS_LENGTH_PER_TILE * tilesHeight];
     }
     public int getNumVisibleRows() { return tilesHeight;}
+    public int getNumTilesInRow() { return tilesWidth; }
 
 
     public void changeWidth(double width)
