@@ -82,8 +82,6 @@ public class TileEditorSkin extends SkinBase<TileEditor> implements Skin<TileEdi
 
 
 
-
-
     private void resizedWidth(double width)
     {
         System.out.println("TileE width defined: "+width);
