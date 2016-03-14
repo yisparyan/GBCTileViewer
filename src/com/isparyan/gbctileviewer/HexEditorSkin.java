@@ -58,24 +58,38 @@ public class HexEditorSkin extends SkinBase<HexEditor> implements Skin<HexEditor
     private void moveAndDraw(int numOfLinesToMove)
     {
         if(getSkinnable().isFileLoaded()) {
-            System.out.println("Current Line: " + currentLine);
+            //System.out.println("Current Line: " + currentLine);
             int ROWS_IN_HEXBOX = hexBox.getNumVisibleRows();
+
             if (currentLine + numOfLinesToMove >= 0) {
-                byte[] temp = getSkinnable().getData(HexTextRegion.BYTES_PER_LINE * ROWS_IN_HEXBOX, HexTextRegion.BYTES_PER_LINE * numOfLinesToMove);
-                currentLine += numOfLinesToMove;
-                hexBox.drawHex(temp, (int) currentLine);
-                scrollbarListenerDisable = true;
-                scrollBar.setValue(scrollBar.getValue() + numOfLinesToMove);
-                scrollbarListenerDisable = false;
+                ByteReadData byteData = getSkinnable().getData(HexTextRegion.BYTES_PER_LINE * ROWS_IN_HEXBOX, HexTextRegion.BYTES_PER_LINE * numOfLinesToMove);
+                if(byteData != null) {
+                    currentLine += numOfLinesToMove;
+                    hexBox.drawHex(byteData.bytes, (int) currentLine, byteData.bytesRead);
+                    scrollbarListenerDisable = true;
+                    scrollBar.setValue(scrollBar.getValue() + numOfLinesToMove);
+                    scrollbarListenerDisable = false;
+                }
+
             }
+            System.out.println("Current Line: " + currentLine);
         }
     }
     private void set(long jumpToLine)
     {
+        System.out.println("set "+jumpToLine);
         int ROWS_IN_HEXBOX = hexBox.getNumVisibleRows();
-        byte[] temp = getSkinnable().getDataAtLoc(HexTextRegion.BYTES_PER_LINE * ROWS_IN_HEXBOX, HexTextRegion.BYTES_PER_LINE * jumpToLine);
-        currentLine = jumpToLine;
-        hexBox.drawHex(temp, (int)currentLine);
+        ByteReadData byteData = getSkinnable().getDataAtLoc(HexTextRegion.BYTES_PER_LINE * ROWS_IN_HEXBOX, HexTextRegion.BYTES_PER_LINE * jumpToLine);
+
+        if(byteData != null) {
+            currentLine = jumpToLine;
+            hexBox.drawHex(byteData.bytes, (int)currentLine, byteData.bytesRead);
+
+            scrollbarListenerDisable = true;
+            scrollBar.setValue(jumpToLine);
+            scrollbarListenerDisable = false;
+        }
+
     }
     private void redraw()
     {
@@ -96,7 +110,6 @@ public class HexEditorSkin extends SkinBase<HexEditor> implements Skin<HexEditor
         hbox = new HBox();
 
         hexBox = new HexTextRegion();
-        currentLine = 0;
 
         scrollBar = new ScrollBar();
         scrollBar.setOrientation(Orientation.VERTICAL);
@@ -118,9 +131,11 @@ public class HexEditorSkin extends SkinBase<HexEditor> implements Skin<HexEditor
 
         moveAndDraw(0);    //initial draw
     }
-    private void setScrollBarSettings()
+    private void setScrollBarSettings() //Called when new file is loaded
     {
-        scrollBar.setMax(((double) getSkinnable().getFileLength() / HexTextRegion.BYTES_PER_LINE) - 10);
+        double max = (double) getSkinnable().getFileLength() / HexTextRegion.BYTES_PER_LINE;
+       if( getSkinnable().getFileLength() % HexTextRegion.BYTES_PER_LINE == 0) max--;   //When leftover bytes don't draw onto next line
+        scrollBar.setMax(max);
         scrollBar.setVisibleAmount(hexBox.getNumVisibleRows());
     }
     private void registerListeners()
@@ -133,7 +148,7 @@ public class HexEditorSkin extends SkinBase<HexEditor> implements Skin<HexEditor
             @Override
             public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
                 if (!scrollbarListenerDisable) {
-                    set(newValue.intValue());
+                    set(newValue.longValue());
                     //System.out.println(newValue.intValue()-oldValue.intValue());
                 }
 
@@ -162,6 +177,7 @@ public class HexEditorSkin extends SkinBase<HexEditor> implements Skin<HexEditor
     {
         hexBox.setHeight(height);
         moveAndDraw(0);
+        moveAndDraw(0); //You have to call it twice (I don't know why this happens)
         scrollBar.setVisibleAmount(hexBox.getNumVisibleRows());
         System.out.println("New Height: " + height);
     }

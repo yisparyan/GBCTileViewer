@@ -22,9 +22,12 @@ import java.io.RandomAccessFile;
 public class HexEditor extends Control
 {
     private RandomAccessFile reader;
-    private long pos;
+    private long currentPos;
     private SimpleBooleanProperty fileLoadedProperty;
     private byte[] data;
+    private int bytesRead;
+
+    private SimpleBooleanProperty dataChangedProperty;  //Used to interface with TileEditor so that it can be notified of changes
 
     public HexEditor()
     {
@@ -34,8 +37,9 @@ public class HexEditor extends Control
     {
         data = null;
         fileLoadedProperty = new SimpleBooleanProperty(false);
+        dataChangedProperty = new SimpleBooleanProperty(false);
         getStyleClass().add("hex-editor");
-        pos = 0;
+        currentPos = 0;
         if(file != null) {
             setFile(file);
         }
@@ -66,38 +70,48 @@ public class HexEditor extends Control
     }
 
     //offset is num of bytes to offset the reader from current pos
-    public byte[] getData(int numBytes, int bytesOffset)
+    public ByteReadData getData(int numBytes, int bytesOffset)
     {
         if(reader == null) return null;
 
         try{
-            byte[] bytesRead = new byte[numBytes];
-            long currentPos = reader.getFilePointer();
-            System.out.println("Current line Pos: "+currentPos/16);
-            reader.seek(currentPos+bytesOffset);
-            if(reader.read(bytesRead) > 15)
+            //TODO: Change data to be fixed-size and rewrite instead of creating new and leaving stuff for GC
+            data = new byte[numBytes];
+            currentPos = reader.getFilePointer();
+
+            reader.seek(currentPos+bytesOffset);                    //Jump to loc to read from
+            //TODO: Store the number of bytes read for scrolling issue //TODO:Check if correct!
+            bytesRead = reader.read(data);
+            if(bytesRead > 0)                                       //Read data
             {
-                reader.seek(currentPos+bytesOffset);
-                return bytesRead;
+                reader.seek(currentPos+bytesOffset);                //Reset location back
+                dataChangedProperty.set(true);                      //Report to TileEditor data changed
+
+                currentPos = reader.getFilePointer(); System.out.println("Current line Pos: "+currentPos/16); //DEBUGGING PURPOSES
+                return new ByteReadData(data, bytesRead, currentPos);
             }
+            else { reader.seek(currentPos); }                       //Reset to original loc
+            System.out.println("Not reading bytes");
         }
         catch (IOException e){
+            System.out.println("Error reading data from file.");
             e.printStackTrace();
         }
 
         return null;
     }
-    public byte[] getDataAtLoc(int numBytes, long pos)
+    public ByteReadData getDataAtLoc(int numBytes, long pos)
     {
         if(reader == null) return null;
 
         try{
-            byte[] bytesRead = new byte[numBytes];
+            byte[] data = new byte[numBytes];
             reader.seek(pos);
-            if(reader.read(bytesRead) > 15)
+            bytesRead = reader.read(data);
+            if(bytesRead > 0)
             {
                 reader.seek(pos);
-                return bytesRead;
+                return new ByteReadData(data, bytesRead, pos);
             }
         }
         catch (IOException e){
@@ -106,6 +120,15 @@ public class HexEditor extends Control
 
         return null;
     }
+    public ByteReadData getStoredData(){return new ByteReadData(data, bytesRead, currentPos);}
+
+    public ReadOnlyBooleanProperty dataChangedProperty() {
+        return dataChangedProperty;
+    }
+    public void resetDataChanged() {
+        dataChangedProperty.set(false);
+    }
+
     public boolean isFileLoaded()
     {
         return fileLoadedProperty.get();

@@ -21,25 +21,20 @@ public class HexTextRegion extends Region
     Canvas canvas;
     GraphicsContext gc;
     int fontSize;
-    int numRows;
+    int numRowsOnScreen;
 
     final static int FONT_SPACING = 4;
+    //TODO : Change so that this can be changed to 8, 16, 32, or 64
     public final static int BYTES_PER_LINE = 16;
 
     public HexTextRegion()
     {
         this(700,600, 18);
     }
-    public HexTextRegion(byte[] dataToDisplay)
-    {
-        this(700, 500, 18);
-        drawHex(dataToDisplay);
-    }
     public HexTextRegion(double width, double height, int fontsize)
     {
         super();
         fontSize = fontsize;
-
         canvas = new Canvas(width, height);
 
         gc = canvas.getGraphicsContext2D();
@@ -48,6 +43,7 @@ public class HexTextRegion extends Region
         gc.setFont(Font.font("monospace", fontSize));
 
         getChildren().add(canvas);
+        calcNumRows();
         //drawJunk();
     }
     public void setWidth(double width)
@@ -58,15 +54,11 @@ public class HexTextRegion extends Region
     {
         canvas.setHeight(height);
     }
-    public int getNumVisibleRows()
-    {
-        calcNumRows();
-        return numRows;
-    }
+    public int getNumVisibleRows() { return numRowsOnScreen;}
 
     private void calcNumRows()
     {
-        numRows = (int)canvas.getHeight()/(fontSize+FONT_SPACING);
+        numRowsOnScreen = (int)canvas.getHeight()/(fontSize+FONT_SPACING);
     }
     private void drawJunk()
     {
@@ -78,17 +70,32 @@ public class HexTextRegion extends Region
     }
 
     //This function assumes that the length of byte[] hex is 16 * numRows it supports
-    public void drawHex(byte[] hex, int firstLineNumber)
+    public void drawHex(byte[] hex, int firstLineNumber, int bytesRead)
     {
         clearCanvas();
         calcNumRows();
+        //TODO : change this depending on bytes per line
+        changeColor("blue");
         gc.fillText("Address:0  1  2  3  4  5  6  7  8  9  A  B  C  D  E  F", FONT_SPACING, 0);
-        for(int i = 0; i < numRows; i++) {
+        changeColor("black");
+        int i;
+        for(i = 0; i < bytesRead/BYTES_PER_LINE; i++) {
             String currentLine = Integer.toHexString((firstLineNumber+i)*16) + ":\t" + bytesToHex(Arrays.copyOfRange(hex, i * 16, 16 + i * 16));
+            gc.fillText(currentLine, FONT_SPACING, (fontSize + FONT_SPACING)*(i+1));
+            changeColor("blue");
+            currentLine = Integer.toHexString((firstLineNumber+i)*16);
+            gc.fillText(currentLine, FONT_SPACING, (fontSize + FONT_SPACING)*(i+1));
+            changeColor("black");
+        }
+        if(bytesRead%BYTES_PER_LINE != 0) { //if there is leftover bytes, draw them
+            String currentLine = Integer.toHexString((firstLineNumber+i)*16) + ":\t" + bytesToHex(Arrays.copyOfRange(hex, i * 16, bytesRead%BYTES_PER_LINE + i * 16));
             gc.fillText(currentLine, FONT_SPACING, (fontSize + FONT_SPACING)*(i+1));
         }
     }
-    public void drawHex(byte[] hex) { drawHex(hex, 0); }
+    //public void drawHex(byte[] hex) { drawHex(hex, 0); }
+    private void changeColor(String color) {
+        gc.setFill((Paint.valueOf(color)));
+    }
     private void clearCanvas()
     {
         gc.setFill(Paint.valueOf("white"));
@@ -105,7 +112,8 @@ public class HexTextRegion extends Region
 
     //http://stackoverflow.com/questions/9655181/how-to-convert-a-byte-array-to-a-hex-string-in-java
     final private static char[] hexArray = "0123456789ABCDEF".toCharArray();
-    private static String bytesToHex(byte[] bytes) {
+    private static String bytesToHex(byte[] bytes)
+    {
         char[] hexChars = new char[bytes.length * 3];
         for ( int j = 0; j < bytes.length; j++ ) {
             int v = bytes[j] & 0xFF;
@@ -116,60 +124,4 @@ public class HexTextRegion extends Region
         return new String(hexChars);
     }
 
-    /*
-    hex = hexStringToByteArray(
-                "3b169f2846904276d7db14d26a5d8f0c" +
-                "302872e5d594928c9ab4fdac85881e55" +
-                "54bfcebeffbbc12a1516bc630f1fdcdf" +
-                "5e5dfccdfee359037e32a54601e6e480" +
-                "81a97f959836767b489b7293efc26219" +
-                "3b169f2846904276d7db14d26a5d8f0c" +
-                "302872e5d594928c9ab4fdac85881e55" +
-                "54bfcebeffbbc12a1516bc630f1fdcdf" +
-                "5e5dfccdfee359037e32a54601e6e480" +
-                "81a97f959836767b489b7293efc26219" +
-                "3b169f2846904276d7db14d26a5d8f0c" +
-                "302872e5d594928c9ab4fdac85881e55" +
-                "54bfcebeffbbc12a1516bc630f1fdcdf" +
-                "5e5dfccdfee359037e32a54601e6e480" +
-                "81a97f959836767b489b7293efc26219" +
-                "3b169f2846904276d7db14d26a5d8f0c" +
-                "302872e5d594928c9ab4fdac85881e55" +
-                "54bfcebeffbbc12a1516bc630f1fdcdf" +
-                "5e5dfccdfee359037e32a54601e6e480" +
-                "81a97f959836767b489b7293efc26219" +
-                "3b169f2846904276d7db14d26a5d8f0c" +
-                "302872e5d594928c9ab4fdac85881e55" +
-                "54bfcebeffbbc12a1516bc630f1fdcdf" +
-                "5e5dfccdfee359037e32a54601e6e480" +
-                "81a97f959836767b489b7293efc26219" +
-                "3b169f2846904276d7db14d26a5d8f0c" +
-                "302872e5d594928c9ab4fdac85881e55" +
-                "54bfcebeffbbc12a1516bc630f1fdcdf" +
-                "5e5dfccdfee359037e32a54601e6e480" +
-                "81a97f959836767b489b7293efc26219" +
-                "3b169f2846904276d7db14d26a5d8f0c" +
-                "302872e5d594928c9ab4fdac85881e55" +
-                "54bfcebeffbbc12a1516bc630f1fdcdf" +
-                "5e5dfccdfee359037e32a54601e6e480" +
-                "81a97f959836767b489b7293efc26219" +
-                "3b169f2846904276d7db14d26a5d8f0c" +
-                "302872e5d594928c9ab4fdac85881e55" +
-                "54bfcebeffbbc12a1516bc630f1fdcdf" +
-                "5e5dfccdfee359037e32a54601e6e480" +
-                "81a97f959836767b489b7293efc26219" +
-                "ed8723f5");
-
-
-    //http://stackoverflow.com/questions/11208479/how-do-i-initialize-a-byte-array-in-java
-    private static byte[] hexStringToByteArray(String s) {
-        int len = s.length();
-        byte[] data = new byte[len / 2];
-        for (int i = 0; i < len; i += 2) {
-            data[i / 2] = (byte) ((Character.digit(s.charAt(i), 16) << 4)
-                    + Character.digit(s.charAt(i + 1), 16));
-        }
-        return data;
-    }
-    */
 }

@@ -38,9 +38,9 @@ public class Main extends Application {
 
         splitPane.getItems().add(hexViewer);
         splitPane.setDividerPosition(0, 1);
-        //Add Empty Stuff
-        Region nothing = new Region();
-        splitPane.getItems().add(nothing);
+        //Tile Renderer
+        TileEditor tileEditor = new TileEditor(hexViewer);
+        splitPane.getItems().add(tileEditor);
         /////* End Center */////
         ////////////////////////
 
@@ -110,7 +110,7 @@ public class Main extends Application {
         menuBar.getMenus().addAll(menuFile, menuOptions, menuHelp);
         menuBar.setUseSystemMenuBar(true);
 
-        Label topInfo = new Label("Top Info text bar with extra information that should go here. Not sure what to put here tbh.");
+        Label topInfo = new Label("Placeholder text for top bar.");
         topVBox.getChildren().addAll(menuBar, topInfo);
         /////* End Top *//////
         //////////////////////
