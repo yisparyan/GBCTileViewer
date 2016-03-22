@@ -118,11 +118,13 @@ public class TileEditorSkin extends SkinBase<TileEditor> implements Skin<TileEdi
     {
         System.out.println("TileE width defined: "+width);
         tileRenderer.changeWidth(width-scrollBar.getWidth());
+        moveAndDraw(0);
     }
 
     private void resizedHeight(double height)
     {
         tileRenderer.changeHeight(height);
+        moveAndDraw(0);
     }
 
     private void addEventHandlers()
@@ -163,7 +165,7 @@ public class TileEditorSkin extends SkinBase<TileEditor> implements Skin<TileEdi
 
             if (currentLine + numOfLinesToMove >= 0) {
                 ByteReadData byteData = getSkinnable().getData(tiles_in_row * rows_in_tile_renderer * TileRendererRegion.BYTES_PER_TILE,
-                        TileRendererRegion.BYTES_PER_TILE * rows_in_tile_renderer * numOfLinesToMove);
+                        TileRendererRegion.BYTES_PER_TILE * tiles_in_row * numOfLinesToMove);
 
                 if(byteData != null) {
                     currentLine += numOfLinesToMove;
@@ -188,7 +190,7 @@ public class TileEditorSkin extends SkinBase<TileEditor> implements Skin<TileEdi
         int rows_in_tile_renderer= tileRenderer.getNumVisibleRows();
 
         ByteReadData byteData = getSkinnable().getDataAtLoc(tiles_in_row * rows_in_tile_renderer * TileRendererRegion.BYTES_PER_TILE,
-                TileRendererRegion.BYTES_PER_TILE * rows_in_tile_renderer * jumpToLine);
+                TileRendererRegion.BYTES_PER_TILE * tiles_in_row * jumpToLine);
 
         if(byteData != null) {
             currentLine = jumpToLine;
@@ -204,7 +206,7 @@ public class TileEditorSkin extends SkinBase<TileEditor> implements Skin<TileEdi
 
     private void setScrollBarSettings() //Called when new file is loaded
     {
-        int rows_in_tile_renderer= tileRenderer.getNumVisibleRows();
+        int rows_in_tile_renderer = tileRenderer.getNumVisibleRows();
         int tiles_in_row = tileRenderer.getNumTilesInRow();
 
         double max = (double) getSkinnable().getFileLength() / (TileRendererRegion.BYTES_PER_TILE * rows_in_tile_renderer);

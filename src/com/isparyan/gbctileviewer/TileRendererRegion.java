@@ -73,6 +73,7 @@ public class TileRendererRegion extends Region
         }
     }
     public void drawPicture(ByteReadData byteReadData) {
+        //TODO change the draw code to lower the amount of draw calls (This is horribly inefficient right now!)
         clearCanvas();
         int numTiles = byteReadData.bytesRead/HexTextRegion.BYTES_PER_LINE;
 
@@ -88,9 +89,9 @@ public class TileRendererRegion extends Region
 
 
                 for(int c = 0; c < 8; c++) {                        //draws 8 horizontal pixels in a tile
-                    int hibit = (byteReadData.bytes[i*HexTextRegion.BYTES_PER_LINE+j+1] >> (7-c)) & 1;
-                    int lobit = (byteReadData.bytes[i*HexTextRegion.BYTES_PER_LINE+j] >> (7-c)) & 1;
-                    int setColor = (hibit << 1) | lobit;
+                    int hiBit = (byteReadData.bytes[i*HexTextRegion.BYTES_PER_LINE+j+1] >> (7-c)) & 1;
+                    int loBit = (byteReadData.bytes[i*HexTextRegion.BYTES_PER_LINE+j] >> (7-c)) & 1;
+                    int setColor = (hiBit << 1) | loBit;
 
                     switch (setColor){
                         case 0:
@@ -131,9 +132,18 @@ public class TileRendererRegion extends Region
     private void calculatePixelSize()
     {
         //TODO
-        pixelSize = 2;
-        tilesWidth = 16;
-        tilesHeight = 80;
+        pixelSize = 4;
+        double width = canvas.getWidth();
+        double height = canvas.getHeight();
+
+        System.out.println("WIDTH: "+width);
+        tilesWidth = (int) (width/ (pixelSize*TILE_PIXELS_LENGTH) );
+        System.out.println("tilesWIdth: "+tilesWidth);
+
+        tilesHeight = (int) (height/ (pixelSize*TILE_PIXELS_LENGTH));
+
+        //tilesWidth = 16;
+        //tilesHeight = 40;
         //pixels = new int[PIXELS_LENGTH_PER_TILE * tilesWidth * PIXELS_LENGTH_PER_TILE * tilesHeight];
     }
     public int getNumVisibleRows() { return tilesHeight;}
@@ -143,9 +153,11 @@ public class TileRendererRegion extends Region
     public void changeWidth(double width)
     {
         canvas.setWidth(width);
+        calculatePixelSize();
     }
     public void changeHeight(double height)
     {
         canvas.setHeight(height);
+        calculatePixelSize();
     }
 }
